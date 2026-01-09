@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 
+
 from app.core.logger import setup_logging, get_logger, LOG_FILE
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.llm import chat_model
@@ -24,10 +25,16 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
     response = chat_model.invoke(request.query)
 
+    final_response = {
+        "query": request.query,
+        "answer": response.content,
+        "sources": []  # Pass an empty list for now until you add RAG
+    }
 
-    logger.info(f"Response: query={response.query!r}, answer={response.answer!r}, sources_count={len(response.sources)}")
 
-    return response
+    logger.info(f"Response: query={response}")
+
+    return final_response
 
 
 if __name__ == "__main__":
