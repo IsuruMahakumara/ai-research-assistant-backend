@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from app.core.logger import setup_logging, get_logger, LOG_FILE
 from app.schemas.chat import ChatRequest, ChatResponse
+from app.llm import chat_model
 
 setup_logging()
 logger = get_logger(__name__)
@@ -21,11 +22,8 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     logger.info(f"Request: query={request.query!r}, top_k={request.top_k}")
 
-    response = ChatResponse(
-        query=request.query,
-        answer="",
-        sources=[],
-    )
+    response = chat_model.invoke(request.query)
+
 
     logger.info(f"Response: query={response.query!r}, answer={response.answer!r}, sources_count={len(response.sources)}")
 
